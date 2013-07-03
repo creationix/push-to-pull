@@ -1,0 +1,25 @@
+{
+  "name": "push-to-pull",
+  "version": "0.0.1",
+  "description": "Convert a push-filter to a pull-filter (for simple streams)",
+  "main": "transform.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/creationix/push-to-pull.git"
+  },
+  "keywords": [
+    "simple-stream",
+    "push-filter",
+    "stream"
+  ],
+  "author": "Tim Caswell <tim@creationix.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "a31b6bc8d1233fc30a0aef6ad985b4444856962c",
+  "bugs": {
+    "url": "https://github.com/creationix/push-to-pull/issues"
+  }
+}
