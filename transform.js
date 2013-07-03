@@ -3,9 +3,8 @@
 module.exports = pushToPull;
 function pushToPull(pushFilter) {
   return function (stream) {
-    var dataQueue = [];
-    var readQueue = [];
-    var reading = false;
+    var queue = [];
+    var output = null;
     var done = false;
 
     var emit = pushFilter(onEmit);
@@ -14,35 +13,23 @@ function pushToPull(pushFilter) {
 
     function read(callback) {
       if (done) return callback();
-      readQueue.push(callback);
-      check();
-    }
-
-    function check() {
-      while (readQueue.length && dataQueue.length) {
-        var data = dataQueue.shift();
-        readQueue.shift().apply(null, data);
-        if (data[1] === undefined) done = true;
+      if (queue.length) {
+        return callback.apply(null, queue.shift());
       }
+      if (output) return callback(new Error("Only one read allowed at a time"));
+      output = callback;
+      stream.read(emit);
+    }
 
-      while (done && readQueue.length) {
-        readQueue.shift()();
+    function onEmit(err, item) {
+      if (output) {
+        var callback = output;
+        output = null;
+        callback(err, item);
       }
-
-      if (reading || !readQueue.length) return;
-      reading = true;
-      stream.read(onRead);
-    }
-
-    function onRead(err, item) {
-      reading = false;
-      emit(err, item);
-      check();
-    }
-
-    function onEmit() {
-      dataQueue.push(arguments);
-      check();
+      else {
+        queue.push(arguments);
+      }
     }
 
   };
