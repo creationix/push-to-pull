@@ -3,11 +3,12 @@
 module.exports = pushToPull;
 function pushToPull(pushFilter) {
   return function (stream) {
+    var extras = Array.prototype.slice.call(arguments, 1);
     var queue = [];
     var output = null;
     var done = false;
 
-    var emit = pushFilter(onEmit);
+    var emit = pushFilter.apply(null, [onEmit].concat(extras));
 
     return { read: read, abort: stream.abort };
 
