@@ -11,10 +11,10 @@ var pushToPull = require('push-to-pull');
 // Dumb filter that inputs numbers and outputs that many monkeys
 // Encoded as an (emit) -> emit transform filter.
 function pushFilter(emit) {
-  return function (err, item) {
-    if (item === undefined) return emit(err);
+  return function (item) {
+    if (item === undefined) return emit();
     for (var i = 1; i <= item; i++) {
-      emit(null, "MONKEY " + i);
+      emit("MONKEY " + i);
     }  
   }
 }

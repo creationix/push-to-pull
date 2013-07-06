@@ -61,10 +61,10 @@ function sink(stream, num) {
 }
 
 var filter = pushToPull(function (emit) {
-  return function (err, item) {
-    if (item === undefined) return emit(err);
-    emit(null, item);
-    emit(null, "extra");
+  return function (item) {
+    if (item === undefined) return emit();
+    emit(item);
+    emit("extra");
   }
 });
 

@@ -1,36 +1,38 @@
 // input push-filter: (emit) -> emit
 // output is simple-stream pull-filter: (stream) -> stream
 module.exports = pushToPull;
-function pushToPull(pushFilter) {
+function pushToPull(parser) {
   return function (stream) {
-    var extras = Array.prototype.slice.call(arguments, 1);
+  
+    var write = parser(onData);
+    var cb = null;
     var queue = [];
-    var output = null;
-    var done = false;
-
-    var emit = pushFilter.apply(null, [onEmit].concat(extras));
-
+      
     return { read: read, abort: stream.abort };
-
+    
     function read(callback) {
-      if (done) return callback();
-      if (queue.length) {
-        return callback.apply(null, queue.shift());
-      }
-      if (output) return callback(new Error("Only one read allowed at a time"));
-      output = callback;
-      stream.read(emit);
+      if (queue.length) return callback(null, queue.shift());
+      if (cb) return callback(new Error("Only one read at a time."));
+      cb = callback;
+      stream.read(onRead);
+      
     }
 
-    function onEmit(err, item) {
-      if (output) {
-        var callback = output;
-        output = null;
-        callback(err, item);
+    function onRead(err, item) {
+      var callback = cb;
+      cb = null;
+      if (err) return callback(err);
+      try {
+        write(item);
       }
-      else {
-        queue.push(arguments);
+      catch (err) {
+        return callback(err);
       }
+      return read(callback);
+    }
+
+    function onData(item) {
+      queue.push(item);
     }
 
   };
