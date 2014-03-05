@@ -8,7 +8,7 @@ function source(ms) {
   var i = 0;
   var done = false;
   return { read: read, abort: abort };
-  
+
   function read(callback) {
     if (done) return callback();
     var n = ++i;
@@ -16,7 +16,7 @@ function source(ms) {
       callback(null, n);
     }, ms);
   }
-  
+
   function abort(callback) {
     done = true;
     callback();
@@ -40,7 +40,7 @@ function sink(stream, num) {
     };
     stream.read(onRead);
   };
-  
+
   function onRead(err, item) {
     // When the end is reached, resolve the continuable
     if (item === undefined) return finish(err, items);
@@ -54,7 +54,7 @@ function sink(stream, num) {
       stream.read(onRead);
     }
   }
-  
+
   function onAbort(err) {
     if (err) return finish(err);
   }

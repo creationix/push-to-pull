@@ -15,7 +15,7 @@ function pushFilter(emit) {
     if (item === undefined) return emit();
     for (var i = 1; i <= item; i++) {
       emit("MONKEY " + i);
-    }  
+    }
   }
 }
 

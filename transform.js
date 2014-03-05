@@ -3,19 +3,19 @@
 module.exports = pushToPull;
 function pushToPull(parser) {
   return function (stream) {
-  
+
     var write = parser(onData);
     var cb = null;
     var queue = [];
-      
+
     return { read: read, abort: stream.abort };
-    
+
     function read(callback) {
       if (queue.length) return callback(null, queue.shift());
       if (cb) return callback(new Error("Only one read at a time."));
       cb = callback;
       stream.read(onRead);
-      
+
     }
 
     function onRead(err, item) {
